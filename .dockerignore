@@ -1,0 +1,13 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+*.egg-info/
+tests/
+example/
+model/
+ecr-meta/
+*.md
+*.csv
+*.log
+LICENSE
