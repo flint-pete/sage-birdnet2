@@ -1,6 +1,6 @@
 name: "sage-birdnet2"
 namespace: "beckman"
-version: "2.0.0"
+version: "2.0.1"
 description: "Versatile v2 cache-consumer BirdNET — re-architected as a pywaggle2 cache consumer that reads self-describing -v2- 15-second FLAC audio clips a producer wrote to the shared on-node /local-cache and runs BirdNET V2.4 acoustic classification frame-anchored (observation time = capture time). The cache dir is a single --input parameter, so the SAME plugin classifies any audio stream (e.g. /local-cache/camera-audio/mic, written by media-sampler3) with no code change, publishing per-species detections (env.detection.*). Audio metadata is read from a .flac.json sidecar the producer writes next to each clip."
 authors: "Pete Beckman"
 collaborators: "Sage Team"

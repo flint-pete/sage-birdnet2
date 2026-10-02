@@ -2,7 +2,7 @@
 
 All notable changes to the `sage-birdnet2` Sage plugin.
 
-## Unreleased (image tag still 2.0.0)
+## 2.0.1 — 2026-10-02
 
 ### Changed
 - **Pinned all dependencies** to the versions verified on H039: `tensorflow==2.21.0`

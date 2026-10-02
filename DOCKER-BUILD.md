@@ -27,7 +27,7 @@ build in Step 5, run and test in Step 6). This page covers the build itself.
 
 ```bash
 scripts/deploy-sideload.sh --skip-register    # arm64 build + import into k3s (a few minutes)
-sudo k3s ctr images ls | grep sage-birdnet2   # registry.sagecontinuum.org/beckman/sage-birdnet2:2.0.0
+sudo k3s ctr images ls | grep sage-birdnet2   # registry.sagecontinuum.org/beckman/sage-birdnet2:2.0.1
 ```
 
 - **Tag:** the name, namespace and version come from `sage.yaml`. The tag is only

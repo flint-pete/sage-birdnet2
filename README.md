@@ -66,7 +66,7 @@ sudo pluginctl-nodeinfo run --name sage-birdnet2-consumer --selector zone=core \
   --resource limit.memory=2Gi,request.memory=1Gi \
   -v /media/plugin-data/local-cache:/local-cache \
   -e WAGGLE_JOB_NAME=camera -e WAGGLE_TASK_NAME=sage-birdnet2 \
-  registry.sagecontinuum.org/beckman/sage-birdnet2:2.0.0 -- \
+  registry.sagecontinuum.org/beckman/sage-birdnet2:2.0.1 -- \
   --source cache --input /local-cache/camera-audio/mic \
   --every 10m --all-unseen --max-frames 0 --min-confidence 0.6 &
 ```
