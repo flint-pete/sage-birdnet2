@@ -6,15 +6,16 @@ writes into the node's shared `/local-cache`, runs BirdNET on each clip, and
 publishes per-species detections. Each detection's timestamp is the time the clip
 was **recorded**, not the time BirdNET ran.
 
-> **Status: offline-tested; on-node run pending.**
-> - `make test` passes **48 tests**, including the audio-sidecar metadata reader
->   (the media-sampler3 audio contract).
-> - The **producer side is proven**: the media-sampler3 audio producer ran on H00F,
+> **Status: verified on H039 with a seeded clip; the live microphone is next.**
+> - **On-node test (H039, Oct 2026):** a seeded 15 s Eastern Bluebird clip in
+>   `/local-cache/camera-audio/mic/`. It came back as *Sialia sialis* in three
+>   3-second windows (0.89–0.9996). The eBird filter used the node's GPS (131
+>   species). `env.detection.audio.summary` and `env.detection.biophony.sialia_sialis`
+>   reached Beehive with the node's VSN and lat/lon.
+> - **The producer side is proven:** the media-sampler3 audio producer ran on H00F,
 >   recording 15 s FLAC clips with `.flac.json` sidecars once a minute.
-> - **Not yet done:** running this consumer against those clips on a node and
->   seeing `env.detection.*` reach Beehive.
-> - The commands below follow the same pattern as the verified yolo2/bioclip2
->   consumers, but treat them as the first real run.
+> - **Not yet done:** producer and birdnet2 together on a live camera microphone.
+> - `make test` passes **48 tests**, including the audio-sidecar metadata reader.
 
 ## Where this fits
 
@@ -63,7 +64,7 @@ cd ~/AI-projects/sage-birdnet2
 scripts/deploy-sideload.sh --skip-register     # CPU image (python:3.12-slim + BirdNET), arm64 build -> k3s
 
 sudo pluginctl-nodeinfo run --name sage-birdnet2-consumer --selector zone=core \
-  --resource limit.memory=4Gi,request.memory=1Gi \
+  --resource limit.memory=2Gi,request.memory=1Gi \
   -v /media/plugin-data/local-cache:/local-cache \
   -e WAGGLE_JOB_NAME=camera -e WAGGLE_TASK_NAME=sage-birdnet2 \
   registry.sagecontinuum.org/beckman/sage-birdnet2:2.0.0 -- \
@@ -91,8 +92,9 @@ What the flags do:
 
   (Each clip's sidecar also carries the node's GPS, written by the producer, and
   that is what appears in the published records' `lat`/`lon`.)
-- **`--resource`** is a starting value (BirdNET is CPU and TFLite, about 1 GB).
-  The GPU consumers needed `16Gi`; adjust after the first run.
+- **`--resource`**: BirdNET is CPU-only, and measured 0.53 GB peak and 0.31 GB
+  steady on H039, so 2Gi leaves plenty of headroom. (The GPU consumers need
+  `16Gi`.)
 - **Expect a backlog on the first run.** With `--all-unseen`, the first wake
   classifies every clip already in the ring. That's up to 500 at the producer's
   `--cache-max-count 500`. Use `--select-every 0 --max-frames K` with a new

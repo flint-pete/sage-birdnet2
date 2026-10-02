@@ -2,13 +2,27 @@
 
 All notable changes to the `sage-birdnet2` Sage plugin.
 
-## Unreleased (docs/naming only; image stays 2.0.0)
+## Unreleased (image tag still 2.0.0)
+
+### Fixed
+- **The image builds again:** pinned `birdnet==0.2.16`. Unpinned, pip picked
+  birdnet 1.1.1, which no longer installs TensorFlow, and the model-preload step
+  failed. 2.0.0 had never been built on a node before this.
+
+### Verified
+- First on-node run (H039, Oct 2026), using the install guide's seeded-audio test
+  (new fixture `tests/test-audio/eastern-bluebird-XC179669.flac`, CC BY-SA, with
+  attribution):
+  - result: *Sialia sialis* ×3 (0.89–0.9996);
+  - the eBird filter took the node's GPS from `pluginctl-nodeinfo`;
+  - summary and biophony records reached Beehive with lat/lon;
+  - memory: 0.53 GB peak, so the run command now uses `limit.memory=2Gi`.
 
 ### Added
 - `README.md`: what it does, where it fits (the audio example consumer for
   media-sampler3), its link to the original [birdnet](https://github.com/flint-pete/birdnet)
-  plugin, a code map, the Thor run command, published topics, and an honest status
-  (offline-tested; on-node run pending).
+  plugin, a code map, the Thor run command (`sudo pluginctl-nodeinfo run`, no
+  identity flags), published topics, and status.
 - `scripts/deploy-sideload.sh` (+ `register-ecr-version.py`), identical to
   sage-yolo2/sage-bioclip2, so all three example consumers build the same way.
 

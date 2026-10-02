@@ -336,13 +336,14 @@ def resolve_location(args, node_info):
 
       1. Explicit --lat/--lon on the CLI (override).
       2. The node's own identity (WAGGLE_NODE_GPS_* via node_info) — the fixed-node
-         GPS; the sidecar lat/lon is currently null, so this is the real source.
+         GPS, present when the pod is launched with pluginctl-nodeinfo or by the
+         patched scheduler.
       3. Sentinel (-1, -1) — geo-filtering disabled (full global species list).
 
-    The frame's sidecar lat/lon would be preferred if present, but the audio producer
-    currently writes null, so per-frame location is not used to build the filter (the
-    geo filter is a per-run construct, not per-frame). If a future producer emits GPS,
-    consumer.resolve_identity already surfaces it per frame for meta attribution.
+    The geo filter is a per-run construct, so a per-clip sidecar lat/lon is not used
+    to build it. (The media-sampler3 producer does write the node's GPS into each
+    sidecar when it has it; consumer.resolve_identity surfaces that per clip for the
+    published records' lat/lon.)
     """
     if not (args.lat == -1 and args.lon == -1):
         logger.info("Location from --lat/--lon: (%.4f, %.4f)", args.lat, args.lon)

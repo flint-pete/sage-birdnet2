@@ -3,13 +3,10 @@
 # deploy-sideload.sh — one-command side-load deploy for this Sage plugin on Thor.
 #
 # WHY THIS EXISTS
-#   The ECR portal "Register and Build" path cannot build the NVIDIA/CUDA-base
-#   plugins (sage-yolo2, sage-bioclip2) yet: the pipeline cross-builds linux/arm64
-#   under QEMU on x86 and crashes on the CUDA base (qemu signal 6 / exit 134).
-#   That's Infra #3, still open (the /proc/acpi runc bug, Infra #2, IS fixed).
-#   CPU-only plugins (sage-birdnet2) could use ECR, but this side-load path is used
-#   for all three so they deploy the same way. The path: build natively on Thor
-#   (arm64, no QEMU) → import into k3s containerd → (optionally) register catalog
+#   The ECR portal "Register and Build" path can build these Thor/arm64 images, but
+#   until they are published there, the dev/test path is a side-load, used the same
+#   way for the consumer plugins: build natively on Thor (arm64) → import into k3s
+#   containerd → (optionally) register catalog
 #   metadata so SES validates → (optionally) create+submit the SES job. Pods use
 #   imagePullPolicy=IfNotPresent, so a locally-imported image under the exact
 #   registry-qualified tag is used without any registry pull.
@@ -147,7 +144,7 @@ if [ "$DRY_RUN" -eq 0 ]; then
   [ "$DO_BUILD" -eq 1 ] && need k3s || true
 fi
 
-# ── Step 1: build natively on Thor (arm64, no QEMU) ──────────────────────────
+# ── Step 1: build natively on Thor (arm64) ───────────────────────────────────
 if [ "$DO_BUILD" -eq 1 ]; then
   say "Step 1/4 — build ${TAG} natively (arm64)"
   run "sudo docker build -t '$TAG' ."
