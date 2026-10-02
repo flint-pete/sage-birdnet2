@@ -2,7 +2,7 @@
 """Unit tests for the AUDIO sidecar metadata reader (consumer.read_frame_metadata).
 
 sage-birdnet2 is a v2 cache CONSUMER of AUDIO frames. Unlike the image family
-(image-sampler2 / sage-yolo2 / sage-bioclip2), whose self-describing metadata is
+(media-sampler3 / sage-yolo2 / sage-bioclip2), whose self-describing metadata is
 embedded in EXIF UserComment inside the JPEG, an audio clip (FLAC) has no EXIF
 container. The v2 audio producer therefore writes the metadata to a SIDECAR JSON
 file next to the clip:
@@ -61,9 +61,9 @@ def _read(clip_path):
 # --- fixture: a fake v2 FLAC clip + its .flac.json sidecar -------------------
 
 # Real audio sidecar schema (mirrors the image UserComment JSON field set, minus
-# the EXIF-only bits). vsn=H00F, camera=hummingcam_mic, source_type=camera_mic.
+# the EXIF-only bits). vsn=H00F, camera=mic, source_type=camera_mic.
 _VSN = "H00F"
-_CAMERA = "hummingcam_mic"
+_CAMERA = "mic"
 _CAPTURE_TS_NS = 1_700_000_000_123_456_789
 
 
@@ -107,7 +107,7 @@ def _write_clip(dir_path, *, capture_ts_ns=_CAPTURE_TS_NS, vsn=_VSN,
 
 def test_reads_authoritative_fields_from_sidecar(tmp_path):
     clip = _write_clip(tmp_path, unique_id="abc123", vsn="H00F",
-                       camera="hummingcam_mic", node_id="000048b02d",
+                       camera="mic", node_id="000048b02d",
                        acquisition_path="native-raw")
     m = _read(clip)
     # capture_ts is the FILENAME prefix (authoritative ordering key).
@@ -115,7 +115,7 @@ def test_reads_authoritative_fields_from_sidecar(tmp_path):
     # identity from the sidecar.
     assert m.unique_id == "abc123"
     assert m.vsn == "H00F"
-    assert m.camera == "hummingcam_mic"
+    assert m.camera == "mic"
     assert m.node_id == "000048b02d"
     assert m.acquisition_path == "native-raw"
 

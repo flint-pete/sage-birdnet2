@@ -1,14 +1,14 @@
 """
 sage-birdnet2 — BirdNET V2.4 audio species classifier, v2 cache-consumer architecture.
 
-Reads self-describing `-v2-` AUDIO frames a producer (hummingcam-audio-producer)
+Reads self-describing `-v2-` AUDIO frames that media-sampler3 (the audio producer)
 wrote to the shared on-node `/local-cache`, runs BirdNET V2.4 inference on each
 15-second FLAC clip, and publishes per-species detections frame-anchored (observation
 time = clip capture time, NOT wall-clock).
 
 THE SWITCH: like sage-bioclip2, the cache dir is a single `--input` parameter, so the
 same plugin consumes any v2 audio stream with no code change:
-  --source cache --input /local-cache/hummingcam-audio/hummingcam_mic
+  --source cache --input /local-cache/camera-audio/mic
 
 Architecture mirrors sage-bioclip2 / sage-yolo2: the cache-consumer machinery
 (consumer / selection / seenstore / node_info) is vendored from sage-yolo2 — see
@@ -388,7 +388,7 @@ def build_parser() -> argparse.ArgumentParser:
         epilog="""examples:
   # Production: consume 15s FLAC clips from the shared cache
   python3 app.py --source cache \\
-      --input /local-cache/hummingcam-audio/hummingcam_mic \\
+      --input /local-cache/camera-audio/mic \\
       --every 10m --all-unseen --min-confidence 0.6
 
   # Local dev: classify a single audio file (offline)

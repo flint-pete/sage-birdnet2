@@ -1,7 +1,7 @@
 # Vendored code
 
 Modules vendored from `sage-yolo2` — this is the v2 cache-consumer pattern,
-shared across the v2 plugin family (image-sampler2 producer → sage-yolo2 /
+shared across the v2 plugin family (media-sampler3 producer → sage-yolo2 /
 sage-bioclip2 / sage-birdnet2 consumers). sage-birdnet2 is the AUDIO consumer of
 the same contract, so it reuses the read-side machinery. Four of the five modules
 are **byte-identical**; `consumer.py` carries **one intentional divergence** for
@@ -17,7 +17,7 @@ audio (see below).
 
 ## The one divergence: `consumer.py`'s audio sidecar reader
 
-Image frames (image-sampler2 / sage-yolo2 crops) are self-describing via a JSON
+Image frames (media-sampler3 / sage-yolo2 crops) are self-describing via a JSON
 blob embedded in the JPEG's EXIF **UserComment**. A **FLAC audio clip has no EXIF
 container**, so the v2 audio producer instead writes a **sidecar JSON** next to
 each clip:
@@ -69,11 +69,19 @@ done
 #   make test   # -> tests/test_sidecar_meta.py (+ carried-over vendored tests)
 ```
 
+## Known quirk: seen-store directory
+
+The vendored `seenstore.py` hard-codes `PLUGIN_NAME = "sage-yolo2"`, so
+sage-birdnet2's seen-store lives under
+`/local-cache/.state/sage-yolo2/<consumer-id>/camera-audio/mic/seen`. Its
+consumer-id (e.g. `camera-sage-birdnet2`) keeps it separate from yolo2's and
+bioclip2's stores. Same quirk as sage-bioclip2; documented, not changed.
+
 ## Sync obligation
 
 These modules are the **v2 read contract**. sage-birdnet2 reads exactly the v2
-frames the producer writes. If the v2 format changes (image-sampler2
-`metadata.py` / the audio producer's sidecar schema), re-vendor the four
+frames the producer writes. If the v2 format changes (media-sampler3
+`metadata.py` / `audio_metadata.py` sidecar schema), re-vendor the four
 byte-identical modules from sage-yolo2, mirror any sidecar-schema change in
 `consumer.py`'s audio reader, and re-run `make test`. The carried-over
 `tests/test_selection.py` / `tests/test_seenstore.py` guard the byte-identical
