@@ -57,7 +57,7 @@ modules.
 ## Run it on a Thor node
 
 The install guide covers this end to end: build in Step 5, the seeded-audio test
-in Steps 6b–6f, and the live camera microphone in 6g. The command:
+in Steps 6b–6g, and the live camera microphone in 6h. The command:
 
 ```bash
 cd ~/AI-projects/sage-birdnet2
