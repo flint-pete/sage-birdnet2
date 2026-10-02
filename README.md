@@ -55,24 +55,23 @@ modules.
 
 ## Run it on a Thor node
 
-Prerequisites:
-- The stack is installed (install guide Steps 1–4).
-- The **media-sampler3 audio producer** is running (install guide Step 6b, audio),
-  so clips are arriving in `/local-cache/camera-audio/mic/`.
+The install guide covers this end to end: build in Step 5, the seeded-audio test
+in Steps 6b–6f, and the live camera microphone in 6g. The command:
 
 ```bash
 cd ~/AI-projects/sage-birdnet2
 scripts/deploy-sideload.sh --skip-register     # CPU image (python:3.12-slim + BirdNET), arm64 build -> k3s
 
-sudo pluginctl run --name sage-birdnet2-consumer --selector zone=core \
+sudo pluginctl-nodeinfo run --name sage-birdnet2-consumer --selector zone=core \
   --resource limit.memory=4Gi,request.memory=1Gi \
   -v /media/plugin-data/local-cache:/local-cache \
   -e WAGGLE_JOB_NAME=camera -e WAGGLE_TASK_NAME=sage-birdnet2 \
   registry.sagecontinuum.org/beckman/sage-birdnet2:2.0.0 -- \
   --source cache --input /local-cache/camera-audio/mic \
-  --every 10m --all-unseen --max-frames 0 \
-  --min-confidence 0.6 --lat <deg> --lon <deg> &
+  --every 10m --all-unseen --max-frames 0 --min-confidence 0.6 &
 ```
+
+`pluginctl-nodeinfo` is the patched `pluginctl` from install Step 3 (same flags).
 
 What the flags do:
 
@@ -82,13 +81,16 @@ What the flags do:
   same across relaunches. Because of a quirk in the copied code, the store lives at
   `/local-cache/.state/sage-yolo2/camera-sage-birdnet2/camera-audio/mic/seen`
   (see VENDORED.md).
-- **`--lat/--lon`** turn on BirdNET's eBird range filter (species plausible at
-  that place and week).
-  - Pods started with `pluginctl` don't get the node's `WAGGLE_NODE_GPS_*`
-    variables.
-  - media-sampler3's audio sidecars currently carry no GPS.
-  - Without these flags the filter is off, and you get the global species list
-    (more false positives).
+- **Location, for BirdNET's eBird range filter** (species plausible at that place
+  and week). The location comes from, in order:
+  1. `--lat/--lon`, if given (an override);
+  2. the node's GPS from the pod env (`WAGGLE_NODE_GPS_*`), which
+     `pluginctl-nodeinfo` provides;
+  3. otherwise, none. The filter is then off and you get the global species list,
+     with more false positives. The startup log says which source was used.
+
+  (Each clip's sidecar also carries the node's GPS, written by the producer, and
+  that is what appears in the published records' `lat`/`lon`.)
 - **`--resource`** is a starting value (BirdNET is CPU and TFLite, about 1 GB).
   The GPU consumers needed `16Gi`; adjust after the first run.
 - **Expect a backlog on the first run.** With `--all-unseen`, the first wake
@@ -105,8 +107,8 @@ q env.detection.audio.summary      # one per clip, even with no detections (hear
 q 'env.detection.biophony.*'       # bird/frog/insect detections, if any
 ```
 
-**Quick model check without the cache** (dev). This classifies one file inside
-the image, publishing nothing:
+**Quick model check without the cache** (dev). This classifies one file instead
+of reading the cache. Run inside a pod, it publishes like a normal run:
 
 ```bash
 python3 app.py --source file --input ./clip.flac --lat 41.88 --lon -87.98
@@ -142,15 +144,17 @@ These work the same as sage-yolo2 (see its README §7):
 - The seen-store is keyed on each clip's `unique_id` from its sidecar.
 - A clip with a missing or corrupt sidecar still gets processed (its name gives
   the time and stream), but it has no `unique_id`. So it is **reprocessed on
-  every wake** until the ring evicts it. A hand-copied test clip behaves the same
-  way; delete it after use.
+  every wake** until the ring evicts it. A hand-copied test clip, such as the
+  install guide's seeded bluebird (`tests/test-audio/`), behaves the same way;
+  delete it after use.
 
 ## Testing
 
 `make test` sets up its own throwaway venv and runs the offline suite: selection,
 seen-store, and the audio-sidecar contract (`tests/test_sidecar_meta.py`). It
-needs no BirdNET model and no node. The real-model check is the on-node run
-above, which is still pending.
+needs no BirdNET model and no node. The real-model check is the install guide's
+seeded-audio test: `tests/test-audio/eastern-bluebird-XC179669.flac` (CC BY-SA;
+see that folder's README) should come back as `Sialia sialis`.
 
 ## Docs in this repo
 

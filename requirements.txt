@@ -1,4 +1,4 @@
-birdnet>=0.2.16
+birdnet==0.2.16   # pinned: app.py uses this API; 1.x made TensorFlow optional and broke the image build (Oct 2026)
 librosa>=0.11
 numpy
 soundfile
