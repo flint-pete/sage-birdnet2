@@ -4,6 +4,12 @@ All notable changes to the `sage-birdnet2` Sage plugin.
 
 ## Unreleased (image tag still 2.0.0)
 
+### Changed
+- **Pinned all dependencies** to the versions verified on H039: `tensorflow==2.21.0`
+  (now explicit), `librosa==1.0.0`, `numpy==2.5.3`, `soundfile==0.14.0`,
+  `pywaggle[audio]==0.56.3`, plus the existing `birdnet==0.2.16`. Rebuilt and
+  seeded test passed.
+
 ### Fixed
 - **The image builds again:** pinned `birdnet==0.2.16`. Unpinned, pip picked
   birdnet 1.1.1, which no longer installs TensorFlow, and the model-preload step

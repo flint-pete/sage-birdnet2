@@ -14,6 +14,9 @@ build in Step 5, run and test in Step 6). This page covers the build itself.
   `birdnet>=0.2.16`, pip installed 1.1.1 without TensorFlow, and the build failed
   at the model-preload step ("Backend 'tf' ... requires TensorFlow"; H039, Oct
   2026). 0.2.16 depends on TensorFlow, so pip installs it.
+- **All other dependencies are pinned too** (`requirements.txt`), to the versions
+  that built and ran on H039. To upgrade, change a pin, rebuild, and re-run the
+  seeded test.
 - **Models baked in:** the Dockerfile loads BirdNET's acoustic and geo models
   (V2.4) at build time, so the pod needs no network at runtime.
 - **ECR:** the Sage ECR portal can build this image. The stack builds all three
