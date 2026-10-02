@@ -32,7 +32,6 @@ camera ─▶ media-sampler3 ─▶ /local-cache/camera/top/ ─▶ sage-yolo2 �
 | Related | Role |
 |---|---|
 | [media-sampler3](https://github.com/flint-pete/media-sampler3) | The producer whose clips this reads. Hub repo: [install guide](https://github.com/flint-pete/media-sampler3/blob/master/INSTALLING-MEDIA-SAMPLER3.md), [REBOOT-RECOVERY.md](https://github.com/flint-pete/media-sampler3/blob/master/REBOOT-RECOVERY.md), [HOW-IT-WORKS.md](https://github.com/flint-pete/media-sampler3/blob/master/docs/HOW-IT-WORKS.md) |
-| [birdnet](https://github.com/flint-pete/birdnet) | The **original** BirdNET plugin. It opens the mic or camera itself. sage-birdnet2's model code, eBird geo/season filter and topic routing were carried over from it; [birdnet/RESEARCH.md](https://github.com/flint-pete/birdnet/blob/main/RESEARCH.md) is the model survey. |
 | [sage-yolo2](https://github.com/flint-pete/sage-yolo2) | Source of the copied cache-consumer modules (see `VENDORED.md`) |
 | [wes-local-cache-manager](https://github.com/flint-pete/wes-local-cache-manager) | Provides and bounds `/local-cache`; never evicts `.state/`, where the seen-store lives |
 
@@ -48,11 +47,11 @@ modules.
 
 | File | What it does | Origin |
 |---|---|---|
-| `app.py` | CLI, wake loop, `BirdNETClassifier`, eBird geo/season filter, topic routing, clip upload (`--save-match`) | model code and routing from [birdnet](https://github.com/flint-pete/birdnet); loop from sage-yolo2/bioclip2 |
+| `app.py` | CLI, wake loop, `BirdNETClassifier`, eBird geo/season filter, topic routing, clip upload (`--save-match`) | this repo; the loop follows sage-yolo2/bioclip2 |
 | `consumer.py` | Read side of the v2 cache contract: scans `-v2-` names (`.flac`/`.wav` too) and reads metadata (**sidecar** for audio). Fails fast if the cache is missing. Resolves identity (clip first, pod env as fallback). | sage-yolo2 + the audio-sidecar addition |
 | `selection.py`, `seenstore.py`, `node_info.py`, `save_match.py` | Clip selection, seen-store dedup, pod identity, `Name:confidence` rules | copied unchanged from sage-yolo2 |
 | `scripts/deploy-sideload.sh` | Native Thor build plus k3s import (identical to yolo2's and bioclip2's) | sage-yolo2 |
-| `RESEARCH.md` | Survey of wildlife-audio models (why BirdNET V2.4) | birdnet |
+| `RESEARCH.md` | Survey of wildlife-audio models (why BirdNET V2.4) | this repo |
 
 ## Run it on a Thor node
 

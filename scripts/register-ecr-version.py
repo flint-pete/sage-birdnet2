@@ -13,10 +13,9 @@ version, `sesctl submit` fails with:
     [registry.sagecontinuum.org/<ns>/<name>:<ver> does not exist in ECR]
 
 The portal "Create App / add version" UI registers that catalog record for
-you (and tries to build the image). But for Thor/arm64 NVIDIA plugins the
-portal *build* crashes under QEMU — and we serve the actual image via the
-local sideload anyway (SES pods use imagePullPolicy=IfNotPresent). So all
-we actually need from ECR is the catalog *metadata* record. This script
+you (and builds the image). When you serve the image via a local sideload
+instead (SES pods use imagePullPolicy=IfNotPresent), all you need from ECR
+is the catalog *metadata* record. This script
 creates it directly via the API.
 
 It works by cloning an existing version's record (same app, any prior
@@ -31,7 +30,7 @@ USAGE
         --name birdnet-species \
         --from-version 0.1.0 \
         --version 0.1.1 \
-        --git-url https://github.com/flint-pete/birdnet.git \
+        --git-url https://github.com/<owner>/<repo>.git \
         --token "$SAGE_TOKEN"          # or set SAGE_TOKEN env var
 
 After it prints "registered: <ns>/<name>:<ver>", re-run `sesctl submit`.
@@ -74,7 +73,7 @@ def main():
                     help="An existing registered version to clone metadata from")
     ap.add_argument("--version", required=True, help="The new version to register")
     ap.add_argument("--git-url", required=True,
-                    help="GitHub repo URL, e.g. https://github.com/flint-pete/birdnet.git")
+                    help="GitHub repo URL, e.g. https://github.com/flint-pete/sage-yolo2.git")
     ap.add_argument("--branch", default="main")
     ap.add_argument("--arch", default="linux/arm64",
                     help="Comma-separated architectures (default: linux/arm64)")

@@ -20,8 +20,7 @@ All notable changes to the `sage-birdnet2` Sage plugin.
 
 ### Added
 - `README.md`: what it does, where it fits (the audio example consumer for
-  media-sampler3), its link to the original [birdnet](https://github.com/flint-pete/birdnet)
-  plugin, a code map, the Thor run command (`sudo pluginctl-nodeinfo run`, no
+  media-sampler3), a code map, the Thor run command (`sudo pluginctl-nodeinfo run`, no
   identity flags), published topics, and status.
 - `scripts/deploy-sideload.sh` (+ `register-ecr-version.py`), identical to
   sage-yolo2/sage-bioclip2, so all three example consumers build the same way.
